@@ -3,49 +3,70 @@ package datastructures.worklists;
 import cse332.exceptions.NotYetImplementedException;
 import cse332.interfaces.worklists.FixedSizeFIFOWorkList;
 
+import java.util.NoSuchElementException;
+
 /**
  * See cse332/interfaces/worklists/FixedSizeFIFOWorkList.java
  * for method specifications.
  */
 public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
+    private E[] elements;
+    private int front;
+    private int back;
+    private int size;
+
     public CircularArrayFIFOQueue(int capacity) {
         super(capacity);
-        throw new NotYetImplementedException();
+        this.elements = (E[])new Object[capacity];
+        this.front = 0;
+        this.back = 0;
+        this.size = 0;
     }
 
     @Override
     public void add(E work) {
-        throw new NotYetImplementedException();
+        if(work == null) throw new IllegalArgumentException();
+        if (this.isFull()) throw new IllegalStateException();
+        this.elements[back] = work;
+        back = (back + 1) % this.elements.length;
+        size++;
     }
 
     @Override
     public E peek() {
-        throw new NotYetImplementedException();
+        if (!this.hasWork()) throw new NoSuchElementException();
+        return this.elements[front];
     }
 
     @Override
     public E peek(int i) {
-        throw new NotYetImplementedException();
+        if (i >= size) throw new IllegalArgumentException();
+        return this.elements[(front + i) % elements.length];
     }
 
     @Override
     public E next() {
-        throw new NotYetImplementedException();
+        E data = this.peek();
+        front = (front + 1) % this.elements.length;
+        size--;
+        return data;
     }
 
     @Override
     public void update(int i, E value) {
-        throw new NotYetImplementedException();
+        if (!this.hasWork()) throw new NoSuchElementException();
+        if (value == null || i >= size) throw new IllegalArgumentException();
+        this.elements[(front + i) % elements.length] = value;
     }
 
     @Override
-    public int size() {
-        throw new NotYetImplementedException();
-    }
+    public int size() { return size; }
 
     @Override
     public void clear() {
-        throw new NotYetImplementedException();
+        front = 0;
+        back = 0;
+        size = 0;
     }
 
     @Override
