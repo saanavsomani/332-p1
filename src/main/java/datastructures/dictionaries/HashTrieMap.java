@@ -113,7 +113,10 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
             this.size--;
             temp.pointers.remove(keyTracker);
         }
-        if(temp.value == null && temp.pointers.isEmpty()) return true;
+        if(temp.value == null && temp.pointers.isEmpty()) {
+            this.size--;
+            return true;
+        }
         return false;
     }
 
