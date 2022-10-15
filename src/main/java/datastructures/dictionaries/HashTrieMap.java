@@ -34,30 +34,90 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
     public HashTrieMap(Class<K> KClass) {
         super(KClass);
         this.root = new HashTrieNode();
+        this.size = 0;
     }
 
     @Override
     public V insert(K key, V value) {
-        throw new NotYetImplementedException();
+        if (key == null || value == null) throw new IllegalArgumentException();
+        if (this.root == null) this.root = new HashTrieNode();
+
+        V returnVal;
+        //no key is associated with the value meaning that the previous value is null
+        if(key.isEmpty()) {
+            returnVal = this.root.value;
+            this.root.value = value;
+        } else {
+            HashTrieNode tracker = (HashTrieNode)this.root;
+
+            for (A pointerKey: key) {
+                if(!tracker.pointers.containsKey(pointerKey)) {
+                    tracker.pointers.put(pointerKey, new HashTrieNode());
+                }
+                tracker = tracker.pointers.get(pointerKey);
+            }
+            returnVal = tracker.value;
+            tracker.value = value;
+            if (returnVal == null) this.size++;
+        }
+        return returnVal ;
     }
 
     @Override
     public V find(K key) {
-        throw new NotYetImplementedException();
+        if (key == null) throw new IllegalArgumentException();
+        if (this.root == null) return null;
+
+        HashTrieNode tracker = (HashTrieNode)this.root;
+        for (A pointerKey: key) {
+            tracker = tracker.pointers.get(pointerKey);
+            if (tracker == null) return null;
+        }
+        return tracker.value;
     }
 
     @Override
     public boolean findPrefix(K key) {
-        throw new NotYetImplementedException();
+        if (key == null) throw new IllegalArgumentException();
+        if (this.root == null) return false;
+
+        HashTrieNode tracker = (HashTrieNode)this.root;
+        for (A pointerKey: key) {
+            tracker = tracker.pointers.get(pointerKey);
+            if (tracker == null) return false;
+        }
+        return true;
+        //V val = this.find(key);
+        //return (val != null);
+
     }
 
     @Override
     public void delete(K key) {
-        throw new NotYetImplementedException();
+        if (key == null) throw new IllegalArgumentException();
+        delete(key.iterator(), (HashTrieNode)this.root);
+    }
+
+    private boolean delete(Iterator<A> i, HashTrieNode temp) {
+        if (!i.hasNext()) {
+            temp.value = null;
+            return temp.pointers.isEmpty();
+        }
+        A keyTracker = i.next();
+        boolean deleted = false;
+
+        if (temp.pointers.containsKey(keyTracker)) {
+            deleted = delete(i, temp.pointers.get(keyTracker));
+        }
+        if(deleted) {
+            temp.pointers.remove(keyTracker);
+        }
+        if(temp.value == null && temp.pointers.isEmpty()) return true;
+        return false;
     }
 
     @Override
     public void clear() {
-        throw new NotYetImplementedException();
+        this.root = new HashTrieNode();
     }
 }

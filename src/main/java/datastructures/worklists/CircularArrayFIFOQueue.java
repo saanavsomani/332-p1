@@ -40,7 +40,8 @@ public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
 
     @Override
     public E peek(int i) {
-        if (i >= size) throw new IllegalArgumentException();
+        if (!hasWork()) throw new NoSuchElementException();
+        if (i < 0 || i >= this.size()) throw new IndexOutOfBoundsException();
         return this.elements[(front + i) % elements.length];
     }
 
@@ -54,8 +55,9 @@ public class CircularArrayFIFOQueue<E> extends FixedSizeFIFOWorkList<E> {
 
     @Override
     public void update(int i, E value) {
-        if (!this.hasWork()) throw new NoSuchElementException();
-        if (value == null || i >= size) throw new IllegalArgumentException();
+        if (value == null) throw new IllegalArgumentException();
+        if (!hasWork()) throw new NoSuchElementException();
+        if (i < 0 || i >= this.size()) throw new IndexOutOfBoundsException();
         this.elements[(front + i) % elements.length] = value;
     }
 
