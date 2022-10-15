@@ -101,6 +101,7 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
     private boolean delete(Iterator<A> i, HashTrieNode temp) {
         if (!i.hasNext()) {
             temp.value = null;
+            this.size--;
             return temp.pointers.isEmpty();
         }
         A keyTracker = i.next();
@@ -110,13 +111,9 @@ public class HashTrieMap<A extends Comparable<A>, K extends BString<A>, V> exten
             deleted = delete(i, temp.pointers.get(keyTracker));
         }
         if(deleted) {
-            this.size--;
             temp.pointers.remove(keyTracker);
         }
-        if(temp.value == null && temp.pointers.isEmpty()) {
-            this.size--;
-            return true;
-        }
+        if(temp.value == null && temp.pointers.isEmpty()) return true;
         return false;
     }
 
